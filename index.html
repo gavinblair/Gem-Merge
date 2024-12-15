@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>Gem Merge Game</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        #game-container {
+            position: relative;
+            width: 320px; /* 8 columns * 40px per column */
+            height: 160px; /* 4 rows * 40px per row */
+            background-color: #ddd; /* Temporary kindergarten background */
+            display: grid;
+            grid-template-columns: repeat(8, 40px);
+            grid-template-rows: repeat(4, 40px);
+            gap: 0; /* Remove gap between holes */
+            border: 5px solid #ccc;
+        }
+
+        .hole {
+            position: relative;
+            box-sizing: border-box;
+            background: #888;
+        /* } */
+        /* .hole:not(:has(.gem)) { */
+            background-image: url(img/hole.png);
+            background-position: center center;
+        }
+
+        .gem, .treasure {
+            box-sizing: border-box;
+            width: 40px;
+            height: 40px;
+            position: absolute;
+            cursor: pointer;
+        }
+	
+	    .gem[data-level="1"] {
+            background-image: url('img/1.png');
+        }
+
+        .gem[data-level="2"] {
+            background-image: url('img/2.png');
+        }
+
+        .gem[data-level="3"] {
+            background-image: url('img/3.png');
+        }
+
+        .gem[data-level="4"] {
+            background-image: url('img/4.png');
+        }
+
+        .gem[data-level="5"] {
+            background-image: url('img/5.png');
+        }
+
+        .gem[data-level="6"] {
+            background-image: url('img/6.png');
+        }
+
+        .gem[data-level="7"] {
+            background-image: url('img/7.png');
+        }
+
+        .gem[data-level="8"] {
+            background-image: url('img/8.png');
+        }
+
+        .gem[data-level="9"] {
+            background-image: url('img/9.png');
+        }
+
+        .gem[data-level="10"] {
+            background-image: url('img/10.png');
+        }
+
+        .gem[data-level="11"] {
+            background-image: url('img/11.png');
+        }
+
+        .gem[data-level="12"] {
+            background-image: url('img/12.png');
+        }
+
+        .gem[data-level="13"] {
+            background-image: url('img/13.png');
+        }
+
+        .gem[data-level="14"] {
+            background-image: url('img/14.png');
+        }
+
+        .gem[data-level="15"] {
+            background-image: url('img/15.png');
+        }
+
+        .gem[data-level="16"] {
+            background-image: url('img/16.png');
+        }
+
+        .gem[data-level="17"] {
+            background-image: url('img/17.png');
+        }
+
+        .gem[data-level="18"] {
+            background-image: url('img/18.png');
+        }
+
+        .gem[data-level="19"] {
+            background-image: url('img/19.png');
+        }
+
+        .gem[data-level="20"] {
+            background-image: url('img/20.png');
+        }
+
+        .gem[data-level="21"] {
+            background-image: url('img/21.png');
+        }
+
+        .gem[data-level="22"] {
+            background-image: url('img/22.png');
+        }
+
+        .gem[data-level="23"] {
+            background-image: url('img/23.png');
+        }
+
+        .gem[data-level="24"] {
+            background-image: url('img/24.png');
+        }
+
+        .gem[data-level="25"] {
+            background-image: url('img/25.png');
+        }
+
+        .gem[data-level="26"] {
+            background-image: url('img/26.png');
+        }
+
+        .gem[data-level="27"] {
+            background-image: url('img/27.png');
+        }
+
+        .gem[data-level="28"] {
+            background-image: url('img/28.png');
+        }
+
+        .gem[data-level="29"] {
+            background-image: url('img/29.png');
+        }
+
+        .gem[data-level="30"] {
+            background-image: url('img/30.png');
+        }
+
+        .gem[data-level="31"] {
+            background-image: url('img/31.png');
+        }
+
+        .gem[data-level="32"] {
+            background-image: url('img/32.png');
+        }
+
+        .gem[data-level="33"] {
+            background-image: url('img/33.png');
+        }
+
+        .gem[data-level="34"] {
+            background-image: url('img/34.png');
+        }
+
+        .gem[data-level="35"] {
+            background-image: url('img/35.png');
+        }
+
+        .gem[data-level="36"] {
+            background-image: url('img/36.png');
+        }
+
+        .gem[data-level="37"] {
+            background-image: url('img/37.png');
+        }
+
+        .gem[data-level="38"] {
+            background-image: url('img/38.png');
+        }
+
+        .gem[data-level="39"] {
+            background-image: url('img/39.png');
+        }
+
+        .gem[data-level="40"] {
+            background-image: url('img/40.png');
+        }
+
+        .gem[data-level="41"] {
+            background-image: url('img/41.png');
+        }
+
+        .gem[data-level="42"] {
+            background-image: url('img/42.png');
+        }
+
+        .gem[data-level="43"] {
+            background-image: url('img/43.png');
+        }
+
+        .gem[data-level="44"] {
+            background-image: url('img/44.png');
+        }
+
+        .gem[data-level="45"] {
+            background-image: url('img/45.png');
+        }
+
+        .gem[data-level="46"] {
+            background-image: url('img/46.png');
+        }
+
+        .treasure { background-color: transparent; background-image: url(img/treasure.png);}
+
+        .gem {
+            padding: 2px;
+            background-size: cover; /* optional */
+            background-position: center; /* optional */
+            background-repeat: no-repeat; /* optional */
+        }
+        .hole.selected .gem {
+            border: 2px dashed #000;
+            padding: 0px;
+        }
+
+        .money-popup {
+            position: absolute;
+            text-align: center;
+            width: 100%;
+            font-size: 8px;
+            color: gold;
+            animation: fadeUp 1s ease-out forwards;
+            pointer-events: none;
+        }
+
+        @keyframes fadeUp {
+            0% { opacity: 1; transform: translateY(0); }
+            100% { opacity: 0; transform: translateY(-20px); }
+        }
+
+        #controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        .add-gem {
+            width: 400px;
+            display: block;
+        }
+        
+
+        #controls button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        #controls button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #money {
+            font-size: 18px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <!-- Holes will be dynamically generated here -->
+    </div>
+    <div id="controls">
+        <button id="add-gem">Add Gem</button>
+    </div>
+    <div id="money">Money: $0</div>
+
+    <script>
+        const gemLevels = 46; // Number of gem levels
+        const holesCount = 32; // Number of holes
+        const holeSize = 40; // Size of each hole (and gems)
+        const gameContainer = document.getElementById('game-container');
+        const addGemButton = document.getElementById('add-gem');
+        const moneyDisplay = document.getElementById('money');
+        
+        let holes = [];
+        let money = 0;
+        let selectedGem = null;
+        
+        // Generate holes
+        for (let i = 0; i < holesCount; i++) {
+            const hole = document.createElement('div');
+            hole.classList.add('hole');
+            hole.dataset.index = i;
+            gameContainer.appendChild(hole);
+            holes.push({ element: hole, gem: null });
+        }
+
+        // Generate a random gem or treasure chest in an empty hole
+        function spawnGemOrTreasure() {
+            const emptyHoles = holes.filter(h => !h.gem);
+            if (emptyHoles.length === 0) return;
+
+            const randomHole = emptyHoles[Math.floor(Math.random() * emptyHoles.length)];
+            randomHole.element.classList.remove('selected'); // Ensure no selection class remains
+
+            if (Math.random() < 0.1) { // 10% chance for treasure chest
+                const treasure = createTreasure();
+                randomHole.element.appendChild(treasure);
+                randomHole.gem = treasure;
+            } else {
+                const gem = createGem(1);
+                randomHole.element.appendChild(gem);
+                randomHole.gem = gem;
+            }
+        }
+
+        // Create a gem element
+        function createGem(level) {
+            const gem = document.createElement('div');
+            gem.classList.add('gem');
+            gem.dataset.level = level;
+
+            gem.addEventListener('click', () => {
+                //if the level is 1 or 2, just +1 to the level. don't select it.
+                if(gem.dataset.level <= 2) {
+                    const nextLevel = parseInt(gem.dataset.level) + 1;
+                    gem.dataset.level = nextLevel;
+                    return;
+                }
+                if (selectedGem) {
+                    if (selectedGem !== gem && selectedGem.dataset.level === gem.dataset.level) {
+                        // Merge gems
+                        const nextLevel = parseInt(gem.dataset.level) + 1;
+                        if (nextLevel <= gemLevels) {
+                            gem.dataset.level = nextLevel;
+
+                            // Remove selected gem
+                            const parentHole = selectedGem.parentElement;
+                            parentHole.removeChild(selectedGem);
+                            holes[parentHole.dataset.index].gem = null;
+
+                            selectedGem = null;
+                        }
+                    } else {
+                        selectedGem.parentElement.classList.remove('selected');
+                        selectedGem = null;
+                    }
+                } else {
+                    gem.parentElement.classList.add('selected');
+                    selectedGem = gem;
+                }
+            });
+
+            return gem;
+        }
+
+        // Create a treasure chest element
+        function createTreasure() {
+            const treasure = document.createElement('div');
+            treasure.classList.add('treasure');
+
+            treasure.addEventListener('click', () => {
+                const randomLevel = Math.ceil(Math.random() * 46); // Random gem
+                const gem = createGem(randomLevel);
+                treasure.parentElement.appendChild(gem);
+                holes[treasure.parentElement.dataset.index].gem = gem;
+                treasure.parentElement.removeChild(treasure);
+                
+            });
+
+            return treasure;
+        }
+
+        // Show money popup above a gem
+        function showMoneyPopup(hole, amount) {
+            const popup = document.createElement('div');
+            popup.classList.add('money-popup');
+            popup.textContent = `+$${amount}`;
+            hole.appendChild(popup);
+
+            popup.addEventListener('animationend', () => popup.remove());
+        }
+
+        // Add gem button
+        var timer = 0;
+        addGemButton.addEventListener('click', () => {
+            spawnGemOrTreasure();
+            timer = 0;
+        });
+
+        // Passive income
+        setInterval(() => {
+            console.log(holes);
+            holes.forEach(h => {
+                if (h.gem && h.gem.classList.contains('gem') && h.gem.dataset.level > 2) {
+                    const income = parseInt(h.gem.dataset.level);
+                    money += income;
+
+                    // Show money popup for passive income
+                    showMoneyPopup(h.element, income);
+                    console.log(`Generated passive income from gem level ${h.gem.dataset.level} in hole ${h.element.dataset.index}`);
+
+                }
+            });
+            moneyDisplay.textContent = `Money: $${money}`;
+        }, 1000);
+
+        // Auto-spawn gem or treasure every 10 seconds
+        setInterval(() => {
+            timer++;
+            addGemButton.style.background = `linear-gradient(to right, #4CAF50 ${timer * 10}%, #ccc ${timer * 10}%)`;
+            if (timer === 10) {
+                spawnGemOrTreasure();
+                timer = 0;
+                addGemButton.style.background = '#4CAF50';
+            }
+
+            const emptyHoles = holes.filter(h => !h.gem);
+            if (emptyHoles.length === 0) {
+                addGemButton.disabled = true;
+                addGemButton.textContent = 'FULL';
+            } else {
+                addGemButton.disabled = false;
+                addGemButton.textContent = 'Add Gem';
+            }
+        }, 1000);
+
+    </script>
+</body>
+</html>
