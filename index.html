@@ -234,11 +234,24 @@
 
         .treasure { background-color: transparent; background-image: url(img/treasure.png);}
 
-        .gem {
+        .gem, .store-gem {
             padding: 2px;
             background-size: cover; /* optional */
             background-position: center; /* optional */
             background-repeat: no-repeat; /* optional */
+        }
+        .gem.in_popup, .store-gem {
+            width: 40px;
+            height: 40px;
+            position: initial;
+            display: inline-block;
+            margin: -7px 0 -6px 12px;
+            zoom: 3;
+        }
+        .store-gem {
+            zoom: 1;
+            display: block;
+            margin: 0;
         }
         .hole.selected .gem {
             border: 2px dashed #000;
@@ -273,9 +286,9 @@
 
         #controls button {
             padding: 10px 20px;
-            font-size: 16px;
+            font-size: 28px;
             cursor: pointer;
-            background-color: #4CAF50;
+            background-color: #585;
             color: white;
             border: none;
             border-radius: 5px;
@@ -287,8 +300,35 @@
         }
 
         #money {
+            color: #fff;
             font-size: 18px;
             margin-top: 10px;
+        }
+        #store-popup {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #000;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0,0,0,0.5);
+            display: none;
+        }
+
+        #store-gems {
+            display: block;
+        }
+
+        #store-gem {
+            margin: 10px;
+            width: 100px;
+            height: 100px;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -297,9 +337,17 @@
         <!-- Holes will be dynamically generated here -->
     </div>
     <div id="controls">
-        <button id="add-gem">Add Gem</button>
+        <button id="add-gem">⛏️</button>
+        <button id="store-button">🛍️</button>
     </div>
     <div id="money">Money: $0</div>
+
+    <div id="store-popup">
+        <h2>Store</h2>
+        <p>Purchase gems that you've already created!</p>
+        <div id="store-gems"></div>
+        <button id="close-store-button">Close</button>
+    </div>
 
     <script>
         const gemLevels = 46; // Number of gem levels
@@ -312,6 +360,89 @@
         let holes = [];
         let money = 0;
         let selectedGem = null;
+
+        // Define an array of gem names
+        const gemNames = [
+            "",
+            "",
+            "Ruby",
+            "Sapphire",
+            "Garnet",
+            "Sardonyx",
+            "Sunstone",
+            "Moonstone",
+            "Pearl",
+            "Opal",
+            "Amethyst",
+            "Sugalite",
+            "Paradot",
+            "Lapis Lazuli",
+            "Bismuth",
+            "Rhodonite",
+            "Padparadcha",
+            "Flourite",
+            "Spinel",
+            "Jasper",
+            "Agate",
+            "Jade",
+            "Onyx",
+            "Citrine",
+            "Zircon",
+            "Pyrite",
+            "Nephrite",
+            "Chrysoprase",
+            "Tanzanite",
+            "Kunzite",
+            "Refined Kunzite",
+            "Adventureine",
+            "Turmaline",
+            "Amber",
+            "Bloodstone",
+            "Turquoise",
+            "Beryl",
+            "Apatite",
+            "Argonite",
+            "Labradorite",
+            "Obsidian",
+            "Blue Diamond",
+            "Yellow Diamond",
+            "White Diamond",
+            "Rose Quartz",
+            "Pink Diamond"
+        ];
+
+        // Keep track of the gems the player has already merged
+        let mergedGems = [];
+
+        // Function to show a gem popup
+        function showGemPopup(gemLevel) {
+            const gemName = gemNames[gemLevel - 1];
+            if (!mergedGems.includes(gemLevel)) {
+                const popup = document.createElement('div');
+                popup.innerHTML = `
+                    <h2>${gemName}</h2>
+                    <p>New Gem Unlocked!</p>
+                    <div class="gem in_popup" data-level="${gemLevel}" style="width: 40px; height: 40px; display: inline-block;"></div>
+                    <button id="ok-button">OK</button>
+                `;
+                popup.style.position = 'absolute';
+                popup.style.top = '50%';
+                popup.style.left = '50%';
+                popup.style.transform = 'translate(-50%, -50%)';
+                popup.style.background = '#fff';
+                popup.style.padding = '20px';
+                popup.style.border = '1px solid #000';
+                popup.style.borderRadius = '10px';
+                popup.style.boxShadow = '0px 0px 10px rgba(0,0,0,0.5)';
+                document.body.appendChild(popup);
+
+                const okButton = popup.querySelector('#ok-button');
+                okButton.addEventListener('click', () => {
+                    popup.remove();
+                    mergedGems.push(gemLevel);
+                });
+            }
+        }
         
         // Generate holes
         for (let i = 0; i < holesCount; i++) {
@@ -360,6 +491,10 @@
                         const nextLevel = parseInt(gem.dataset.level) + 1;
                         if (nextLevel <= gemLevels) {
                             gem.dataset.level = nextLevel;
+
+                            if (!mergedGems.includes(nextLevel)) {
+                                showGemPopup(nextLevel);
+                            }
 
                             // Remove selected gem
                             const parentHole = selectedGem.parentElement;
@@ -417,7 +552,6 @@
 
         // Passive income
         setInterval(() => {
-            console.log(holes);
             holes.forEach(h => {
                 if (h.gem && h.gem.classList.contains('gem') && h.gem.dataset.level > 2) {
                     const income = parseInt(h.gem.dataset.level);
@@ -425,12 +559,11 @@
 
                     // Show money popup for passive income
                     showMoneyPopup(h.element, income);
-                    console.log(`Generated passive income from gem level ${h.gem.dataset.level} in hole ${h.element.dataset.index}`);
 
                 }
             });
             moneyDisplay.textContent = `Money: $${money}`;
-        }, 1000);
+        }, 5000);
 
         // Auto-spawn gem or treasure every 10 seconds
         setInterval(() => {
@@ -448,10 +581,83 @@
                 addGemButton.textContent = 'FULL';
             } else {
                 addGemButton.disabled = false;
-                addGemButton.textContent = 'Add Gem';
+                addGemButton.textContent = '⛏️';
             }
         }, 1000);
 
+        const storeButton = document.getElementById('store-button');
+        const storePopup = document.getElementById('store-popup');
+        const storeGemsDiv = document.getElementById('store-gems');
+        const closeStoreButton = document.getElementById('close-store-button');
+
+        // Function to create a store gem element
+        function createStoreGem(level) {
+            const gem = document.createElement('div');
+            gem.id = `store-gem-${level}`;
+            gem.classList.add('store-gem');
+            gem.style.backgroundImage = `url('img/${level}.png')`;
+            gem.dataset.level = level;
+
+            // Add event listener to purchase the gem
+            gem.addEventListener('click', () => {
+                // Check if the player has enough money
+                if (money >= level * 10) {
+                    // Remove the gem from the store and add it to the game
+                    money -= level * 10;
+                    moneyDisplay.textContent = `Money: $${money}`;
+                    const newGem = createGem(level);
+                    spawnGemOrTreasure(newGem);
+                } else {
+                    alert('Not enough money!');
+                }
+            });
+
+            return gem;
+        }
+
+        // Function to generate the store gems
+        function generateStoreGems() {
+            storeGemsDiv.innerHTML = '';
+            mergedGems.forEach(level => {
+                const gem = createStoreGem(level);
+                storeGemsDiv.appendChild(gem);
+            });
+        }
+
+        // Add event listener to the store button
+        storeButton.addEventListener('click', () => {
+            storePopup.style.display = 'block';
+            generateStoreGems();
+        });
+
+        // Add event listener to the close store button
+        closeStoreButton.addEventListener('click', () => {
+            storePopup.style.display = 'none';
+        });
+
+        // Function to spawn a gem or treasure in an empty hole
+        function spawnGemOrTreasure(gem) {
+            const emptyHoles = holes.filter(h => !h.gem);
+            if (emptyHoles.length === 0) return;
+
+            const randomHole = emptyHoles[Math.floor(Math.random() * emptyHoles.length)];
+            randomHole.element.classList.remove('selected'); // Ensure no selection class remains
+
+            if (gem) {
+                randomHole.element.appendChild(gem);
+                randomHole.gem = gem;
+            } else {
+                if (Math.random() < 0.1) { // 10% chance for treasure chest
+                    const treasure = createTreasure();
+                    randomHole.element.appendChild(treasure);
+                    randomHole.gem = treasure;
+                } else {
+                    const gem = createGem(1);
+                    randomHole.element.appendChild(gem);
+                    randomHole.gem = gem;
+                }
+            }
+        }
     </script>
 </body>
 </html>
