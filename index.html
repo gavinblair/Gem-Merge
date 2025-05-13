@@ -339,9 +339,21 @@
             width: 100%;
             z-index: 999;
         }
+        #sound-button {
+          position: fixed;
+          top: 10px;
+          right: 10px;
+          padding: 5px 10px;
+          font-size: 24px;
+          cursor: pointer;
+          background: none;
+          border: none;
+          color: white;
+        }
     </style>
 </head>
 <body>
+    <button id="sound-button">🔊</button>
     <button id="play-game-button" style="display: block;">Play Gem Merge!</button>
 
     <div id="game-container">
@@ -422,6 +434,25 @@
             "Pink Diamond"
         ];
 
+        let soundEnabled = true;
+        const soundButton = document.getElementById('sound-button');
+
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            soundButton.textContent = soundEnabled ? '🔊' : '🔈';
+            // Store preference in localStorage
+            localStorage.setItem('gemMergeSoundEnabled', soundEnabled);
+        }
+
+        // Initialize sound state from localStorage
+        const storedSound = localStorage.getItem('gemMergeSoundEnabled');
+        if (storedSound !== null) {
+            soundEnabled = storedSound === 'true';
+            soundButton.textContent = soundEnabled ? '🔊' : '🔈';
+        }
+
+        soundButton.addEventListener('click', toggleSound);
+
         const sounds = {
             tink1: new Audio('sounds/tink1.m4a'),
             tink2: new Audio('sounds/tink2.m4a'),
@@ -431,7 +462,8 @@
             crack: new Audio('sounds/crack.m4a'),
             hooray: new Audio('sounds/hooray.m4a'),
             squeak: new Audio('sounds/squeak.m4a'),
-        };//usage: sounds.merge.play();
+        };//usage: 
+        // if (soundEnabled) sounds.merge.play();
         var tink = 1;
 
         Object.values(sounds).forEach(sound => sound.preload = 'auto');
@@ -518,12 +550,12 @@
             gem.addEventListener('click', () => {
                 //if the level is 1 or 2, just +1 to the level. don't select it.
                 if(gem.dataset.level == 1) {
-                    sounds["tink"+tink].play();
+                    if (soundEnabled) sounds["tink"+tink].play();
                     tink++;
                     if(tink > 4) { tink = 1; }
                 }
                 if(gem.dataset.level == 2) {
-                    sounds.crack.play();
+                    if (soundEnabled) sounds.crack.play();
                 }
                 if(gem.dataset.level <= 2) {
                     const nextLevel = parseInt(gem.dataset.level) + 1;
@@ -539,10 +571,10 @@
 
                             if (!mergedGems.includes(nextLevel)) {
                                 showGemPopup(nextLevel);
-                                sounds.hooray.play();
+                                if (soundEnabled) sounds.hooray.play();
                             } else {
                                 if(gem.dataset.level > 2) {
-                                    sounds.fuse.play();
+                                    if (soundEnabled) sounds.fuse.play();
                                 }
                             }
 
@@ -572,7 +604,7 @@
             treasure.classList.add('treasure');
 
             treasure.addEventListener('click', () => {
-                sounds.squeak.play();
+                if (soundEnabled) sounds.squeak.play();
                 const randomLevel = Math.ceil(Math.random() * 46); // Random gem
                 const gem = createGem(randomLevel);
                 treasure.parentElement.appendChild(gem);
@@ -695,7 +727,7 @@
 
             const randomHole = emptyHoles[Math.floor(Math.random() * emptyHoles.length)];
             randomHole.element.classList.remove('selected'); // Ensure no selection class remains
-            sounds["tink"+tink].play();
+            if (soundEnabled) sounds["tink"+tink].play();
             tink++;
             if(tink > 4) { tink = 1; }
             if (gem) {
